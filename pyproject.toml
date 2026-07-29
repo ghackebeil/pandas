@@ -5,7 +5,12 @@ requires = [
     "meson-python>=0.13.1",
     "meson>=1.2.1,<2",
     "wheel",
-    "Cython<4.0.0a0",  # Note: sync with setup.py, environment.yml and asv.conf.json
+    # Pin to stable Cython. The upstream spec "Cython<4.0.0a0" contains a
+    # pre-release marker (a0), which flips pip into pre-release mode and installs
+    # the 3.3.0a1 alpha. That alpha miscompiles pandas 2.3.3's non-nano
+    # DateOffset code on CPython 3.11 (segfaults in the cibuildwheel test step);
+    # 3.2.9 is the newest stable release and builds cleanly for cp311 and cp314.
+    "Cython==3.2.9",  # Note: sync with setup.py, environment.yml and asv.conf.json
     # Force numpy higher than 2.0rc1, so that built wheels are compatible
     # with both numpy 1 and 2.
     # Cap <2.4: pandas 2.3.x compiled offsets crash against numpy>=2.4, so the
