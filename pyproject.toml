@@ -13,9 +13,12 @@ requires = [
     "Cython==3.2.9",  # Note: sync with setup.py, environment.yml and asv.conf.json
     # Force numpy higher than 2.0rc1, so that built wheels are compatible
     # with both numpy 1 and 2.
-    # Cap <2.4: pandas 2.3.x compiled offsets crash against numpy>=2.4, so the
-    # wheel must be built against the same numpy line it runs on (see runtime
-    # dependency cap below).
+    # Build against the 2.3.x line (<2.4) on purpose: compiling against the
+    # older ABI keeps the wheel importable across numpy 2.3.x AND 2.4.x
+    # (verified running on 2.4.6). The runtime cap below is <2.5, NOT <2.4 --
+    # the wheel runs cleanly on numpy 2.4, but pandas 2.3.3 emits a generic-unit
+    # np.timedelta64 deprecation that numpy>=2.5 turns fatal under the test
+    # suite's -W error, so numpy 2.5 is excluded until a later pandas.
     "numpy>=2.0,<2.4",
     "versioneer[toml]"
 ]
@@ -35,9 +38,9 @@ authors = [
 license = {file = 'LICENSE'}
 requires-python = '>=3.9'
 dependencies = [
-  "numpy>=1.22.4,<2.4; python_version<'3.11'",
-  "numpy>=1.23.2,<2.4; python_version=='3.11'",
-  "numpy>=1.26.0,<2.4; python_version>='3.12'",
+  "numpy>=1.22.4,<2.5; python_version<'3.11'",
+  "numpy>=1.23.2,<2.5; python_version=='3.11'",
+  "numpy>=1.26.0,<2.5; python_version>='3.12'",
   "python-dateutil>=2.8.2",
   "pytz>=2020.1",
   "tzdata>=2022.7"
